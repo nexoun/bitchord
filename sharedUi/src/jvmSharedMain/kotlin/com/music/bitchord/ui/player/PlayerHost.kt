@@ -108,6 +108,14 @@ interface PlayerHost {
     @Composable
     fun CastDialog(hazeState: HazeState, onDismiss: () -> Unit) = Unit
 
+    /** Extra controls for the connected output (e.g. earbuds). Empty where the platform has none. */
+    @Composable
+    fun OutputExtras() = Unit
+
+    /** Icon of the connected output when it has extra controls; null hides the player button. */
+    @Composable
+    fun OutputExtrasPainter(): androidx.compose.ui.graphics.painter.Painter? = null
+
     /**
      * Whether lines can be put on a share card here. False hides the pick mode
      * altogether rather than offering a mode with nowhere to put its result.
@@ -226,7 +234,16 @@ data class AudioOutputDevice(
     val name: String,
     val kind: AudioOutputKind,
     val isActive: Boolean = false,
+    /**
+     * What shape of thing a [AudioOutputKind.BLUETOOTH] device is. Buds and
+     * speakers connect as the same A2DP sink, so this is worked out from the
+     * device's name and class — and [BluetoothForm.UNKNOWN] wherever neither
+     * says, rather than a guess drawn as fact.
+     */
+    val form: BluetoothForm = BluetoothForm.UNKNOWN,
 )
+
+enum class BluetoothForm { UNKNOWN, BUDS, HEADPHONES, SPEAKER, CAR }
 
 data class OutputFormatUi(
     /** "24-bit PCM · 48 kHz" — whichever parts are known. */
